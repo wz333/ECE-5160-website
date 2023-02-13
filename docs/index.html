@@ -104,7 +104,7 @@
                             </a>
                             <div class="portfolio-caption">
                                 <div class="portfolio-caption-heading">Lab 1</div>
-                                <div class="portfolio-caption-subheading text-muted">The Artemis board</div>
+                                <div class="portfolio-caption-subheading text-muted">The Artemis Board</div>
                             </div>
                         </div>
                     </div>
@@ -123,21 +123,21 @@
                             </div>
                         </div>
                     </div>
-<!--                    <div class="col-lg-4 col-sm-6 mb-4">-->
-<!--                        &lt;!&ndash; Portfolio item 3&ndash;&gt;-->
-<!--                        <div class="portfolio-item">-->
-<!--                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal3">-->
-<!--                                <div class="portfolio-hover">-->
-<!--                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>-->
-<!--                                </div>-->
-<!--                                <img class="img-fluid" src="assets/img/artemis.JPG" alt="..." />-->
-<!--                            </a>-->
-<!--                            <div class="portfolio-caption">-->
-<!--                                <div class="portfolio-caption-heading">Lab 3</div>-->
-<!--                                <div class="portfolio-caption-subheading text-muted">Identity</div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 3-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal3">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/artemis.JPG" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 3</div>
+                                <div class="portfolio-caption-subheading text-muted">Time of Flight Sensors</div>
+                            </div>
+                        </div>
+                    </div>
 <!--                    <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">-->
 <!--                        &lt;!&ndash; Portfolio item 4&ndash;&gt;-->
 <!--                        <div class="portfolio-item">-->
@@ -388,9 +388,97 @@
                                     <h2 class="text-uppercase">Lab 2</h2>
                                     <p class="item-intro text-muted">Bluetooth</p>
                                     <h3>Introduction</h3>
-
-                                    <h3>Conclusion</h3>
+                                    <p>This lab aims to establish Bluetooth connection and communicate between the Artemis board and PC.</p>
+                                    <h3>Prelab</h3>
+<!--                                    Setup: Briefly describe the steps taken to set up your computer for Lab 2, showing any results (i.e. MAC address printing)-->
+<!--                                    Codebase: Add a brief explanation of your understanding of the codebase and how Bluetooth works between your computer and the Artemis-->
+                                    <h4>a. Setup</h4>
+                                    <p>I already had Python 3.10, pip and venv on my PC, so all I did to get the environment ready was run the following codes in CLI and then install packages in the virtual environment.</p>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_1.png" alt="..."></div>
+                                    <p>On the Artemis board side, I burned the sketch ble_arduino.ino provided in the codebase so that the MCU prints its MAC address via serial communication.</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/2_2.png" alt="..."></div>
+                                    <h4>b. Codebase</h4>
+                                    <p>The codebase used in this lab to establish the BLE channel consists of two parts: Python codes that runs on PC and Arduino codes that process commands on MCU. It is structured as follows:</p>
+                                    <script src="https://gist.github.com/wz333/3d133cd6d736ddfe17799d35179d0989.js"></script>
                                     <p></p>
+                                    <p>On PC end, the configuration file <em>connection.yaml</em> sets the MAC address on the other side and Universally Unique Identifiers (UUID) used in communication. The <em>cmd_type.py</em> file uses an enumeration class to record the map of command types and their associated values. <em>ble.py</em> and <em>base_ble.py</em> define fundamental functions to support BLE. The Jupyter notebook file <em>demo.ipynb</em> runs key commands.</p>
+                                    <p>For MCU, besides the file <em>ble_arduino.ino</em> which is run on the board, there are three header files that define BLE characteristics, Extended String and functions related to robot command strings. </p>
+                                    <p>The BLE connection between PC and MCU works in a pattern like a community bulletin board, where the peripheral device posts data for all radios in the community to read and the central device acts like a reader to view the information on the bulletin board and get the data it needs. </p>
+                                    <h3>Lab Tasks & Results</h3>
+                                    <h4>Configurations</h4>
+                                    I generated a new UUID <em>4921f511-ca96-4e6d-b6de-b8b6971e9d01</em>, and changed the <em>BLE_UUID_TEST_SERVICE</em> in ble_arduino.ino and <em>ble_service</em> in connection.yaml accordingly. I also replaced the Artemis address with the one printed by the MCU (c0:83:0d:6a:12:3c):
+                                    <div class="labim" ><img width="360" src="assets/img/Lab/2_3.png" alt="..."></div>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/2_4.png" alt="..."></div>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/2_5.png" alt="..."></div>
+                                    <h4>Run demo.ipynb</h4>
+                                    <p>Before kicking off lab tasks, I first ran the demo codes and obtained the following outputs:</p>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_6.png" alt="..."></div>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_7.png" alt="..."></div>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_8.png" alt="..."></div>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_9.png" alt="..."></div>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_10.png" alt="..."></div>
+                                    <p>The corresponding output from the MCU:</p>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_11.png" alt="..."></div>
+                                    <h4>Task 1: Send Echo Command</h4>
+                                    <p>The first task is to complete the <em>ECHO</em> case operations on the MCU side, which enables it to reply the PC with an augmented message. I programmed the MCU to repeat the received message three times and append a smiley face:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/2_12.png" alt="..."></div>
+
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/VlH2s0KiM3g"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">Task 1: Send Echo Command<</p>
+                                    <h4>Task 2: Get Time Command</h4>
+                                    <p>The second task is to complete a command <em>GET_TIME_MILLIS</em> where the MCU sends the time in the format of "T:123456".</p>
+                                    <p>I added GET_TIME_MILLIS to the enumeration of both PC and Artemis program. I completed the command as:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/2_13.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/5vjS1YtZ08E"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">Task 2: Get Time Command</p>
+                                    <h4>Task 3: Notification Handler</h4>
+                                    <p>This task is to set up a notification handler at the PC to extract time from the string sent by Artemis.</p>
+                                    <p>In the handler, the received byte array is first decoded to string then sliced, so only the time value is printed:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/2_14.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/7cwEbAJiXJc"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">Task 3: Notification Handler</p>
+                                    <h4>Task 4: Get Temperature Command</h4>
+                                    <p>In this task, another command <em>GET_TEMP_5s</em> is added which sampled temperature in an interval of 1 second for five times and sends the obtained values all at once:</p>
+                                    <div class="labim" ><img width="540" src="assets/img/Lab/2_15.png" alt="..."></div>
+                                    <p>A new notification handler <em>print_recv</em> is setup for this task to demonstrate the results on PC:</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/4_Pm2u5W3sI"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">Task 4: Get Temperature Command</p>
+
+                                    <p>To sample temperature more rapidly, I use another command <em>GET_TEMP_5s_RAPID</em> in which I set an interval of 50ms, thus 5 * 1000 / 50 = 100 temperature points were obtained. I also set a counter on the Artemis side and print it out each time it sends a temperature data to testify:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/2_16.png" alt="..."></div>
+
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/Slp_FstnQnw"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">Task 4: Get Temperature Rapidly</p>
+                                    <h4>Task 5: Limitations</h4>
+                                    <p>The Artemis board has 384 kB of RAM, assuming that all of it can be used for the sampled data, thus <code>384*1000*8/16 = 192,000</code> 16-bit data can be stored. If the data is sampled at 150 Hz, only <code>192,000/150 = 1280</code> seconds of data can be recorded. In other words, only <code>1280/5 = 256</code> flows of "5 seconds of 16-bit values taken at 150 Hz" can be afforded. </p>
+                                    <h4>Task 6: (5160) Effective Data Rate and Overhead</h4>
+                                    <p>To create messages with loads of different sizes, I add a command <em>DATARATE</em> that makes the MCU to send a string of the length specified by PC. For example, if PC runs <code>ble.send_command(CMD.DATARATE,20)</code>, the MCU will reply with a string of 20 '.'s, which takes 20 bytes.</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/2_18.png" alt="..."></div>
+                                    <p>To measure data rate continuously, I set a notification handler for PC which records time upon receiving a message <code>recv_time</code>, command Artemis to send a reply with one more byte, record the sending time <code>send_time</code>, and calculate the data rate by <code>length of message /(recv_time-send_time)</code> in every round.</p>
+                                    <div class="labim" ><img width="460" src="assets/img/Lab/2_17.png" alt="..."></div>
+                                    <p>By running the command, I obtained the data rate for message with 5 and 120 bytes, and also a plot for data rate in terms of message length from 0 to 150 bytes:</p>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/2_19.png" alt="..."></div>
+                                    <p>The plot implies that in general data rate increases as the size of message load goes up. Therefore, it is safe to conclude that larger replies help to reduce the portion of overhead and increase effective data rate, and sending messages in many short packets introduces greater overhead. </p>
+                                    <h4>Task 7: (5160) Reliability</h4>
+                                    <p>To count number of messages sent/received on both sides, I ran a command on Artemis that continuously send messages which carries the information of its index, and counts messages received by PC in a handler: </p>
+                                    <div class="labim" ><img width="460" src="assets/img/Lab/2_20.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/wk08yGXCTV8"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">Additional Task: Reliability</p>
+                                    <p>As the MCU sends data continuously, the data rate is as high as possible. In the test, the computer catched all the messages sent from Artemis without missing any data, so it can be concluded that transmission is reliable.</p>
+                                    <h3>Conclusion</h3>
+                                    <p>This project performs communication between PC and the Artemis board through Bluetooth. Limitations, effective data rate, and reliability concerning such transimission are also discussed. </p>
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
@@ -413,24 +501,34 @@
                             <div class="col-lg-8">
                                 <div class="modal-body">
                                     <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/3.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Finish
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Identity
-                                        </li>
-                                    </ul>
+                                    <h2 class="text-uppercase">Lab 3</h2>
+                                    <p class="item-intro text-muted">Time of Flight Sensors</p>
+                                    <h3>Introduction</h3>
+                                    <p></p>
+                                    <h3>Prelab</h3>
+                                    <p>The sensors use I2C to communicate with the Artemis board. As is specified on VL53L1X's datasheet, the default I2C address is <code>0x52</code>.</p>
+
+                                    <h3>Lab Tasks & Results</h3>
+                                    <h4>Task 1: Connection</h4>
+                                    <p></p>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/3_3.png" alt="..."></div>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/3_4.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Screenshot of Artemis Scanning for I2C Device</p>
+
+                                    <h4>Task 2: Sensor Data</h4>
+                                    <h4>Task 3: 2 ToF Sensors</h4>
+                                    <h4>Task 4: ToF Sensor Speed</h4>
+                                    <h4>Task 5: Time v Distance</h4>
+                                    <h4>Task 6: (5160) Discussion on infrared transmission based sensors/h4>
+                                    <h4>Task 7: (5160) Sensitivity of sensors to colors and textures</h4>
+
+                                    <h3>Conclusion</h3>
+                                    <p></p>
+                                    <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
                                         Close Project
-                                    </button>
+                                    </button></div>
                                 </div>
                             </div>
                         </div>
