@@ -452,11 +452,11 @@
                                     </div>
                                     <p class="item-intro text-muted">Task 4: Get Temperature Command</p>
 
-                                    <p>To sample temperature more rapidly, I use another command <em>GET_TEMP_5s_RAPID</em> in which I set an interval of 50ms, thus 5 * 1000 / 50 = 100 temperature points were obtained. I also set a counter on the Artemis side and print it out each time it sends a temperature data to testify:</p>
+                                    <p>To sample temperature more rapidly, I use another command <em>GET_TEMP_5s_RAPID</em> in which I set an interval of 100ms, thus 5 * 1000 / 100 = 50 samples were obtained in 5 seconds, stored in two arrays, then sent one at a time to PC:</p>
                                     <div class="labim" ><img width="500" src="assets/img/Lab/2_16.png" alt="..."></div>
 
                                     <div class="youtube-embedded">
-                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/Slp_FstnQnw"></iframe>
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/Gssiif0stbA"></iframe>
                                     </div>
                                     <p class="item-intro text-muted">Task 4: Get Temperature Rapidly</p>
                                     <h4>Task 5: Limitations</h4>
@@ -504,26 +504,75 @@
                                     <h2 class="text-uppercase">Lab 3</h2>
                                     <p class="item-intro text-muted">Time of Flight Sensors</p>
                                     <h3>Introduction</h3>
-                                    <p></p>
+                                    <p>This lab aims to arm the Artemis board with two time-of-flight distance sensors. The range, accuracy, repeatability, and reading time of the sensors are examined. </p>
                                     <h3>Prelab</h3>
+                                    <h4>(a) I2C</h4>
                                     <p>The sensors use I2C to communicate with the Artemis board. As is specified on VL53L1X's datasheet, the default I2C address is <code>0x52</code>.</p>
-
+                                    <h4>(b) 2 Sensors</h4>
+                                    <p>Two ToF sensors shall be employed on the robot. As these two share the same default I2C address, one of them is supposed to be changed manually. I implemented this by connecting the XSHUT pin of one of the sensors to a GPIO pin on Artemis. In the setup process, after starting both sensors, the pin outputs low to temporarily shut down the corresponding sensor. A new I2C address is assigned to the other sensor programmatically, then the shut down one can be enabled again with its default address. </p>
+                                    <h4>(c) Placement on Robot</h4>
+                                    <p>I plan to place thw two sensors at the front corners on the robot car, as is shown in the picture:</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/3_0.png" alt="..."></div>
+                                    <p>Each sensor is able to detect obstacles on its corresponding side. If they detect an obstacle of the same distance simultaneously, it is probable that there is an obstacle in the front. However, this requires both of the sensors function correctly with high precision. Also, small obstacles in the front could be missed if it is closer to one sensor. More accurate measurement could be achieved by adding more sensors.</p>
+                                    <h4>(d) Wiring</h4>
+                                    <div class="labim" ><img width="600" src="assets/img/Lab/3_1.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Wiring Diagram</p>
+                                    <p>Qwiic cables are arranged in colors: black for GND, red for 3.3V, blue for SDA and yellow for SCL.</p>
                                     <h3>Lab Tasks & Results</h3>
                                     <h4>Task 1: Connection</h4>
-                                    <p></p>
+                                    <p>The two ToF sensors are connected to a QWIIC break-out board then to the Artemis board.</p>
+                                    <div class="labim" ><img width="640" src="assets/img/Lab/3_2.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Picture of ToF sensors connected to QWIIC</p>
                                     <div class="labim" ><img width="640" src="assets/img/Lab/3_3.png" alt="..."></div>
-                                    <div class="labim" ><img width="640" src="assets/img/Lab/3_4.png" alt="..."></div>
                                     <p class="item-intro text-muted">Screenshot of Artemis Scanning for I2C Device</p>
+                                    <p>After being physically connected, the Artemis scanned the I2C channel and found a device with an address of <code>0x29</code>, which is different from the value <code>0x52</code> claimed in VL53L1X's datasheet. The reason behind this is that I2C transmits MSB first. <code>0x29</code> is 101001 in binary and <code>0x52</code> is 1010010, the first 7 bits of which are the same. After sending the first 7 digits, a zero is padded at the end to fill 8 bits, making <code>0x29</code> turns into <code>0x52</code>.</p>
+                                    <h4>Task 2: Sensor Data of Chosen Mode</h4>
+                                    <p>The ToF sensor has three modes. The default Long mode can measure data up to 4 m away, achieving the maximum ranging distance, but is relatively sensitive to ambient light conditions. The Short mode only has a ranging distance of up to 1.3 m, but it also has the best immunity against ambient changes. The Medium mode is in the middle of the other two, with the ability to detect obstacles up to 3 m away and not too sensitive of ambient lights.</p>
+                                    <p>The final robot is expected to cope with different surroundings, so good ambient immunity is required. Also, a range of 1.3 meters is large enough for a small car. Thus, I think the Short mode should work well on it.</p>
+                                    <div class="labim" ><img width="350" src="assets/img/Lab/3_4.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Experiment Setting</p>
+                                    <p>I checked the range, accuracy, repeatability, and ranging time of the ToF sensor. The samples were taken at an interval of 50 mm from 50 mm to 900 mm. By adding some codes to the ReadDistance example sketch, the MCU sent the ranging time for every measure to PC.</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/3_5.png" alt="..."></div>
+                                    <div class="labim" ><img width="250" src="assets/img/Lab/3_8.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Sample Result</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/3_6.png" alt="..."></div>
+                                     <p class="item-intro text-muted">Measured Distance VS Truth</p>
 
-                                    <h4>Task 2: Sensor Data</h4>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/3_7.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Ranging Time VS Distance</p>
+                                    <p>It can be seen from the results that for Short mode, distance within the 1.3m range can be measured with a maximum error of about &#177; 8mm. Measurement beyond the range returns a zero value. The measurement has good repeatability. Ranging time has little to do with the measuring range, and is approximately 50.0 ms. </p>
                                     <h4>Task 3: 2 ToF Sensors</h4>
+                                    <p>To use 2 ToF sensors simultaneously, one of them needs to be assigned a new I2C address programmatically while the other one is restarted via the XSHUT pin to maintain the default address:</p>
+                                    <div class="labim" ><img width="360" src="assets/img/Lab/3_9.png" alt="..."></div>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/3_10.png" alt="..."></div>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/3_11.png" alt="..."></div>
+                                    <p>In the demonstration video, the two sensors work in parallel and generate results separately:</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/u5838E9BPNU"></iframe>
+                                    </div>
                                     <h4>Task 4: ToF Sensor Speed</h4>
+                                    <p>To maximize reading speed, I removed the<code>stopRanging()</code> and <code>clearInterrupt()</code> commands and moved the <code>startRanging()</code> process to setup codes. Sensor data are only printed when new reading is ready, i.e., <code>.checkForDataReady()</code> returns True.</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/3_12.png" alt="..."></div>
+                                    <div class="labim" ><img width="350" src="assets/img/Lab/3_13.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Sample Result</p>
+                                    <p>Although there are several redundant codes (getting time and serial printing), the loop consistently takes 10 to 11 ms, which is significantly reduced from the ranging time of 50 ms.</p>
+                                    <p>Within the 10-11 ms, the biggest share of time is still taken by ToF reading operations (~8 ms). Therefore, I suppose the limiting factor to lowering time is I2C communication performed between sensors and Artemis.</p>
                                     <h4>Task 5: Time v Distance</h4>
-                                    <h4>Task 6: (5160) Discussion on infrared transmission based sensors/h4>
+                                    <p>A <code>GET_ToF_5s</code> command is written to send ToF data sampled in 5 s to PC through BLE:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/3_14.png" alt="..."></div>
+                                    <p>PC uses a notification handler to parse the received message. Then the samples from two sensors are plotted against time stamps:</p>
+                                    <div class="labim" ><img width="450" src="assets/img/Lab/3_15.png" alt="..."></div>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/3_16.png" alt="..."></div>
+                                    <h4>Task 6: (5160) Discussion on infrared transmission based sensors</h4>
+                                    <p>The sensor used in this lab is based on time-of-flight infrared transmission. Such sensors work by emitting a pulse modulated signal, taking a travel time t until return, and getting the distance d from <code>d = t*c/2</code>, where c is the speed of time. Pros of ToF IR sensors are high sample rate, small form factor and immunity to changes in colors, textures and ambient lights. But they also have shortcomings as high cost and complicated processing.</p>
+                                    <p>Some infrared distance senosrs base on amplitude, comparing the amplitude of the reflected wave to the one of the original emitted wave and calculate distance accordingly. Their pros include low cost and simple circuitry, and they work reasonably well under many circumstances. However, such sensors are extremely sensitive to target reflectivity and perform poorly in high ambient light.</p>
+                                    <p>Another type is triangulation–based sensors. To obtain the distance to target, they emit a wave at an angle and measure the reflected wave with an array of diodes, then calculate results with the angle and the distance between the highest-magnitude diode. Their pros are simple circuitry and less  sensitivity to color, texture, ambient light. On the other side, they are expensive and bulky, and also do not work in high ambient light and has the problem of low sample rate.</p>
                                     <h4>Task 7: (5160) Sensitivity of sensors to colors and textures</h4>
-
+                                    <p>I tested the ToF sensor against a coarse white wall, white paper, yellow book cover, and a piece of black leather. It turned out that there was no notable difference among these materials in terms of reading accuracy and speed. Therefore, the conclusion that the ToF IR sensor is not sensitive to colors and textures is implied.</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/3_18.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Experiment Setting</p>
                                     <h3>Conclusion</h3>
-                                    <p></p>
+                                    <p>Two ToF sensors are connected to the Artemis board. The performance of the two sensors are discussed under different circumstances. Sensor data are sent to PC via BLE and parsed for future use.</p>
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
