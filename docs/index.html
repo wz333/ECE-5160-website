@@ -138,21 +138,21 @@
                             </div>
                         </div>
                     </div>
-<!--                    <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">-->
-<!--                        &lt;!&ndash; Portfolio item 4&ndash;&gt;-->
-<!--                        <div class="portfolio-item">-->
-<!--                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal4">-->
-<!--                                <div class="portfolio-hover">-->
-<!--                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>-->
-<!--                                </div>-->
-<!--                                <img class="img-fluid" src="assets/img/artemis.JPG" alt="..." />-->
-<!--                            </a>-->
-<!--                            <div class="portfolio-caption">-->
-<!--                                <div class="portfolio-caption-heading">Lab 4</div>-->
-<!--                                <div class="portfolio-caption-subheading text-muted">Branding</div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">
+                        <!-- Portfolio item 4-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal4">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/Lab/4.jpg" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 4</div>
+                                <div class="portfolio-caption-subheading text-muted">IMU</div>
+                            </div>
+                        </div>
+                    </div>
 <!--                    <div class="col-lg-4 col-sm-6 mb-4 mb-sm-0">-->
 <!--                        &lt;!&ndash; Portfolio item 5&ndash;&gt;-->
 <!--                        <div class="portfolio-item">-->
@@ -595,24 +595,109 @@
                             <div class="col-lg-8">
                                 <div class="modal-body">
                                     <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/4.jpg" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Lines
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Branding
-                                        </li>
-                                    </ul>
+                                    <h2 class="text-uppercase">Lab 4</h2>
+                                    <p class="item-intro text-muted">IMU</p>
+                                    <h3>Introduction</h3>
+                                    <p>This lab adds an IMU board to Artemis and tests the motion of robot car.</p>
+                                    <h3>Task 1: IMU Setup</h3>
+                                    <h4>(a) Connection & Example Code</h4>
+                                    <p>IMU is connected to Artemis through the QWIIC breakout board:</p>
+                                    <div class="labim" ><img width="340" src="assets/img/Lab/4_1.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Artemis IMU Connection</p>
+                                    <p>After uploading the IMU example code to Artemis, the readings from the accelerometer, gyroscope and magnetometer on IMU are printed:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/4_2.png" alt="..."></div>
+                                    <p>In the example code, a constant <code>AD0_VAL</code> is defined for <code>.begin(WIRE_PORT, AD0_VAL);</code>. It should be set to 1, which is the default value for the SparkFun 9DoF IMU breakout, but should be 0 if the ADR jumper is closed.</p>
+                                    <h4>(b) Data Discussion</h4>
+                                    <p>Accelerometers measure acceleration, which can be used to gauge orientation when stationary by the component of gravity pull on x, y and z axes. Gyroscopes measure the angular velocity around the three axes, which can also be used to obtain orientation.</p>
+                                    <div class="labim" ><img width="480" src="assets/img/Lab/4_3.png" alt="..."></div>
+                                    <p>When the IMU is laid flat on the table, the z axis acceleration is around 1000 mg. All other readings from the accelerometer and the gyroscope are approximately zero, for there is no acceleration or movement except for gravity pull.</p>
+                                    <div class="labim" ><img width="480" src="assets/img/Lab/4_4.png" alt="..."></div>
+                                    <p>When I rotated the IMU to a 90-degree tilt, the 1000 mg transferred to y-axis. Gyroscope reading on y-axis arose then returned to zero when the rotation finished.</p>
+                                    <h4>(c) Visual Indication</h4>
+                                    <p>I added codes to blink the LED on Artemis when IMU is connected and started as a visual indication:</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_6.png" alt="..."></div>
+                                    <div class="labim" ><img width="350" src="assets/img/Lab/4_7.png" alt="..."></div>
+                                    <h3>Task 2: Accelerometer</h3>
+                                    <h4>(a) Pitch and Roll</h4>
+                                    <p>Accelerometer readings can be turned into pitch and roll through mathematical calculations. Pitch is given by <code>pitch_a = atan2(myICM.accX(),myICM.accZ())*180/M_PI</code>, and roll is given by <code>roll_a  = atan2(myICM.accY(),myICM.accZ())*180/M_PI</code>.</p>
+                                    <p>Example outputs for {-90, 0, 90} degrees pitch and roll are:</p>
+                                    <div class="labim" ><img height="120" src="assets/img/Lab/4_8.png" alt="...">
+
+                                    <img height="120" src="assets/img/Lab/4_9.png" alt="...">
+
+                                    <img height="120" src="assets/img/Lab/4_10.png" alt="..."></div>
+                                    <p class="item-intro text-muted">{-90, 0, 90} Degrees Pitch</p>
+                                    <div class="labim" ><img height="120" src="assets/img/Lab/4_11.png" alt="...">
+                                        <img height="120" src="assets/img/Lab/4_12.png" alt="...">
+                                        <img height="120" src="assets/img/Lab/4_13.png" alt="..."></div>
+                                    <p class="item-intro text-muted">{-90, 0, 90} Degrees Roll</p>
+
+                                    <h4>(b) Accuracy Discussion</h4>
+                                    <p>Although noise affects the precision of accelerometer results a lot, causing an error of approximately &#177; 2 degrees, the accuracy is pretty good (readings are basically centered at each true value). Thus, I don't think a two-point calibration is needed in this case.</p>
+                                    <h4>(c) Frequency Spectrum Analysis</h4>
+                                    <p>FFT is used to analyze noise in accelerometer readings. I sampled roll data with a sample rate of 64 for 5 seconds and got 320 points to perform FFT. During the sampling period, I slowly turned IMU around its x-axis.</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_14.png" alt="..."></div>
+                                    <p>With the sampled data from Artemis, a python script was run to generate FFT result:</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_15.png" alt="..."></div>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_16.png" alt="..."></div>
+
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_17.png" alt="..."></div>
+
+                                    <p>From the frequency domain plot, it can be seen that the major component, which stands for the useful data part, lies in the low frequency area near 0 Hz. There is not any notable spike in the frequency domain plot, probably because there is already a low pass filter selected by default for accelerometer in the IMU chip. However, if I have to take another cut-off frequency to eliminate remaining noise, I will choose 5 Hz, which would preserve useful low-frequency data and filter out most of the noise.</p>
+                                    <h3>Task 3: Gyroscope</h3>
+                                    <h4>(a) Pitch, Roll, and Yaw</h4>
+                                    <p>Gyroscope data are collected to calculate pitch, roll and yaw:</p>
+                                    <div class="labim" ><img width="360" src="assets/img/Lab/4_18.png" alt="..."></div>
+                                    <p>Below are some example outputs at different gestures:</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_19.png" alt="..."></div>
+                                    <p>Initially, the IMU board is set to be zero in all three orientations. The returned results from gyroscope and accelerometer are both accurate.</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_20.png" alt="..."></div>
+                                    <p>After a while, I only changed the yaw to 90 degrees with the board still laid flat on table. The yaw result was accurate, but the pitch and roll result from gyroscope were far from true value.</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_21.png" alt="..."></div>
+                                    <p>Then I turned the yaw to -90 degrees. Still, yaw was measured accurately, but  pitch and roll given by gyroscope became more far away from the truth.</p>
+                                    <p>To conclude, the gyroscope gives accurate yaw data, but has severe drifting issue in terms of pitch and roll.</p>
+                                    <h4>(b) Complementary Filter</h4>
+                                    <p>As accelerometer is susceptible to noise but not drifting, while gyroscope generates smooth drifting results, the two can be combined to cancel each other's drawback with a complementary filter. The filter is given by the formula <code>theta = (theta + gyr_data * dt)*(1 - alpha) + acc_data * alpha</code>: </p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_22.png" alt="..."></div>
+                                    <p>After several tests, I chose alpha to be 0.3 to maximize performance. Here's the video demonstrating results from accelerometer only, gyroscope only, and combined, which is close to the accurate accelerometer result but without noise:</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/8jJfevYjoTc"></iframe>
+                                    </div>
+                                    <h3>Task 4: Sample Data</h3>
+                                    <p>After commenting out unnecessary delays and <code>Serial.print</code> statements with only the one printing calculated loop time, the maximum spped to sample data is 1-2 ms:</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/4_23.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Loop Time in ms</p>
+                                    <p>To send IMU and ToF data to PC, I added a new command <code>GET_ToF_IMU_5s</code> which collects IMU and ToF data in arrays for 5s and then sent to PC via bluetooth in the format of time|tof1,tof2|accx,accy,accz|gyrx,gyry,gyrz:</p>
+                                    <script src="https://gist.github.com/wz333/a96a787c604a844b8232d223f0fa20fb.js"></script>
+                                    <p>Received data are processed by a notification hander in Python and then plotted: </p>
+                                    <div class="labim" ><img width="360" src="assets/img/Lab/4_24.png" alt="..."></div>
+                                    <div class="labim" ><img height="240" src="assets/img/Lab/4_25.png" alt="..."><img height="240" src="assets/img/Lab/4_26.png" alt="..."></div>
+                                    <p>As an int takes 2 bytes, and a float takes 4 bytes, each such sample will generate 3*2+6*4=30 bytes. One second takes 10 samples, resulting in 300 bytes. With 384 kB of RAM, the Artemis can support 384*1024/300=1310s of such sampling with full memory allocated to the arrays.</p>
+                                    <h3>Task 5: Cut the Coord</h3>
+                                    <p>The 3.7V 850mAh battery is used to support the motor,as it consumes most of the electricity to drive the car, and Artemis board with peripheral sensors use the 3.7V 650mAh one.</p>
+                                    <div class="labim" ><img width="360" src="assets/img/Lab/4_29.png" alt="..."></div>
+                                    <h3>Task 6: Record a Stunt</h3>
+                                    <p>With the remote control, I managed to make the RC car perform stunts like flipping and spinning in place. To do a flip, the motors should first dash in one direction then motors abruptly inverse direction.</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/QimdDP-7Cis"></iframe>
+                                    </div>
+                                     <p class="item-intro text-muted">Without Artemis</p>
+                                    <div class="youtube-embedded">
+                                        <p>Then I attached Artemis to the car and let it did a spin. Motion data for 5 seconds were recorded and sent to PC.</p>
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/jmDqycNuwNM"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">With Artemis</p>
+                                    <p>Corresponding collected data plots:</p>
+                                    <div class="labim" ><img height="280" src="assets/img/Lab/4_30.png" alt="..."><img height="280" src="assets/img/Lab/4_27.png" alt="..."><img height="280" src="assets/img/Lab/4_28.png" alt="..."></div>
+                                    <p>The ToF data are meaningless as the ToF sensors are not fixed to face proper direction. The abrupt change of GyrZ at 3.5 s indicates the car started to spin. Acceleration oscillations in Y and Z correspond to the bumps while spinning. </p>
+
+                                    <h3>Conclusion</h3>
+                                    <p>In this lab, an IMU is attached to Artemis, the accelerometer and gyroscope readings of which are used to calculate orientation of the robot. Also, battery supported Artemis and robot car are tested.</p>
+                                    <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
                                         Close Project
-                                    </button>
+                                    </button></div>
                                 </div>
                             </div>
                         </div>
