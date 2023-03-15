@@ -734,9 +734,55 @@
                                     <div class="labim" ><img width="300" src="assets/img/Lab/5_3.png" alt="..."></div>
                                     <p>Then I tested on <code>analogWrite(13,127); analogWrite(A14,0);</code>, which generates a 50% duty cycle PWM signal as 127 is approximately half of 255. The corresponding oscilloscope display is:</p>
                                     <div class="labim" ><img width="300" src="assets/img/Lab/5_4.png" alt="..."></div>
-                                    <hr>
+<!--                                    <hr>-->
 
-                                    <p>I fried one of my motor driver chips, thus I am still working on the rest of the lab &#128553;</p>
+<!--                                    <p>I fried one of my motor driver chips, thus I am still working on the rest of the lab &#128553;</p>-->
+
+                                    <h4>Task 2: Wheels Spinning</h4>
+                                    <p>By running the following two codes respectively, I managed to spin the right-side wheels forward and backward.</p>
+                                    <div class="labim" ><img width="240" src="assets/img/Lab/5_21.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/S-AzaEoELgU"></iframe>
+                                    </div>
+                                    <div class="labim" ><img width="230" src="assets/img/Lab/5_20.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/78k4J6o1r8s"></iframe>
+                                    </div>
+                                    <p>With battery attached to the motor drivers, I put the car on the floor and let wheels on both sides spin so that the car can move forward:</p>
+                                    <div class="labim" ><img width="260" src="assets/img/Lab/5_23.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/_6IOVH5paoI"></iframe>
+                                    </div>
+                                    <h4>Task 3: Secure Component</h4>
+                                    <h4>Task 4: Lower Limit PWM Value</h4>
+                                    <p>The lowest PWM values to drive the car to move on the lab's floor and make turns are examined by burning different speed values into Artemis and see if the value works. </p>
+                                    <p>To make the car run, the lower limit PWM value I obtained is 25, corresponding to 9.80% duty cycle:</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/j4793SryDaA"></iframe>
+                                    </div>
+                                    <p>The lower limit to do in-place turns I obtained is 80, corresponding to 31.37% duty cycle:</p>
+                                    <div class="labim" ><img width="240" src="assets/img/Lab/5_40.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/KKM-Wnd0g4k"></iframe>
+                                    </div>
+                                    <p>But these results are susceptible to change in lab settings, e.g. different textures of the floor and smoothness of the tires, etc.. </p>
+                                    <h4>Task 5: Go a Straight Line</h4>
+                                    <p>Initially, the car tended to drift towards its left side, so I added a calibration factor 1.25 which gave the left wheels more power so that the car can follow a fairly straight line. However, such static calibration method is susceptible to environment changes, so it is necessary to use PID control in future labs.</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/5_50.png" alt="..."></div>
+                                    <p>By applying the calibration stated above, the car can go a fairly straight line for over 6 feet in the video (each vinyl tile is 1 feet in length):</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/MT-v3kbassg"></iframe>
+                                    </div>
+
+                                    <h4>Additional Task: Lower Limit PWM Value in Motion</h4>
+                                    <p>As static friction is greater than kinetic friction, it takes higher voltage to start the car from still than to keep it moving while in motion. To explore the lower limit PWM value in motion, I set the initial speed as 26 to start the car, then deduct 1 from the value every 3 seconds to see which value stops the car.</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/5_90.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/NW9rHXVg8jk"></iframe>
+                                    </div>
+                                    <p>As demonstrated in the video, the car stopped after 6 seconds from the time it started to move, which corresponded to PWM value of 24. So the lowest limit is 24 (9.4% duty cycle) to keep the car running in motion, which is lower than the limit to start (25).</p>
+
+
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
