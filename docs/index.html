@@ -168,21 +168,21 @@
                             </div>
                         </div>
                     </div>
-<!--                    <div class="col-lg-4 col-sm-6">-->
-<!--                        &lt;!&ndash; Portfolio item 6&ndash;&gt;-->
-<!--                        <div class="portfolio-item">-->
-<!--                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal6">-->
-<!--                                <div class="portfolio-hover">-->
-<!--                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>-->
-<!--                                </div>-->
-<!--                                <img class="img-fluid" src="assets/img//Lab/6.png" alt="..." />-->
-<!--                            </a>-->
-<!--                            <div class="portfolio-caption">-->
-<!--                                <div class="portfolio-caption-heading">Lab 6</div>-->
-<!--                                <div class="portfolio-caption-subheading text-muted">Photography</div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="col-lg-4 col-sm-6">
+                        <!-- Portfolio item 6-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal6">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img//Lab/6.jpg" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 6</div>
+                                <div class="portfolio-caption-subheading text-muted">Closed-loop control (PID)</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -825,11 +825,36 @@
                                     <h2 class="text-uppercase">Lab 6</h2>
                                     <p class="item-intro text-muted">Closed-loop control (PID)</p>
                                     <h3>Introduction</h3>
-                                    <p>This lab is about PID control. I chose to perform PID on position control by </p>
+                                    <p></p>
                                     <h3>Prelab</h3>
+                                    <p>To log experiment data, the distance value, PID result and motor input are stored along with time stamps while operating. These data are then sent to PC via bluetooth after PID control is completed, as bluetooth transferring generates significant delay thus should not be performed in PID loop.</p>
+                                    <p>For data storage, I chose to initialize four fixed length arrays:</p>
+                                    <div class="labim" ><img width="240" src="assets/img/Lab/6_01.png" alt="..."></div>
+                                    <p>Each array takes <code>2*2000=4000 Bytes</code> and they occupy <code>16 kB</code> in all, which is far from the RAM size 384 kB of the Artemis. Also, one PID cycle takes <code>~7 ms</code>, so the arrays can store data for around <code>7ms*2000=14 s</code>, enough for the PID control to be done.</p>
+                                    <p>The program follows the BLE program used in Lab 4, where the main loop waits for a BLE command. PID control and corresponding logging data are invoked by a <code>PID_POSITION </code>command. First, kp and ki values are parsed from the Bluetooth command, followed by initialization of ToF sensor and parameters. After that, the PID control begins with data logged. Finally, stored data are sent through Bluetooth in the format of time|tof|motor|pid.</p>
+                                    <script src="https://gist.github.com/wz333/cdb2ffa413c50e105c55923cb729f0f1.js"></script>
+
+                                    <p>On PC end, command is sent as<code>ble.send_command(CMD.PID_POSITION, "kp|ki")</code> and received data is parsed with a notification handler:</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/6_02.png" alt="..."></div>
                                     <h3>Lab Tasks</h3>
-
-
+                                    <p>I chose to complete Task A: Position Control.</p>
+                                    <h4>P/I/D Discussion</h4>
+                                    <h4>Range/Sampling Time Discussion</h4>
+                                    <h4>Implementation</h4>
+                                    <p>Final chosen kp=0.25, ki=0.01:</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/HtIxOkBDxYc"></iframe>
+                                    </div>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_61.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/acqvFtxZJjc"></iframe>
+                                    </div>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_62.png" alt="..."></div>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/RQoU-Ic_UZc"></iframe>
+                                    </div>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_63.png" alt="..."></div>
+                                    <h4>Wind-up Discussion</h4>
                                     <h3>Conclusion</h3>
 
                                     <div class="labbtn" >
