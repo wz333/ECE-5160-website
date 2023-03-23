@@ -183,6 +183,21 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-4 col-sm-6">
+                        <!-- Portfolio item 6-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal7">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/artemis.JPG" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 7</div>
+                                <div class="portfolio-caption-subheading text-muted">Kalman Filter</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -825,6 +840,7 @@
                                     <h2 class="text-uppercase">Lab 6</h2>
                                     <p class="item-intro text-muted">Closed-loop control (PID)</p>
                                     <h3>Introduction</h3>
+                                    <p>Lab 6 is about PID control, where a position based  PID is performed. A debugging system that logs experiment data is also constructed in this lab.</p>
                                     <p></p>
                                     <h3>Prelab</h3>
                                     <p>To log experiment data, the distance value, PID result and motor input are stored along with time stamps while operating. These data are then sent to PC via bluetooth after PID control is completed, as bluetooth transferring generates significant delay thus should not be performed in PID loop.</p>
@@ -834,27 +850,95 @@
                                     <p>The program follows the BLE program used in Lab 4, where the main loop waits for a BLE command. PID control and corresponding logging data are invoked by a <code>PID_POSITION </code>command. First, kp and ki values are parsed from the Bluetooth command, followed by initialization of ToF sensor and parameters. After that, the PID control begins with data logged. Finally, stored data are sent through Bluetooth in the format of time|tof|motor|pid.</p>
                                     <script src="https://gist.github.com/wz333/cdb2ffa413c50e105c55923cb729f0f1.js"></script>
 
-                                    <p>On PC end, command is sent as<code>ble.send_command(CMD.PID_POSITION, "kp|ki")</code> and received data is parsed with a notification handler:</p>
-                                    <div class="labim" ><img width="300" src="assets/img/Lab/6_02.png" alt="..."></div>
+                                    <p>On PC end, command is sent as <code>ble.send_command(CMD.PID_POSITION, "kp|ki|kd")</code> and received data is parsed with a notification handler:</p>
+                                    <div class="labim" ><img width="330" src="assets/img/Lab/6_02.png" alt="..."></div>
                                     <h3>Lab Tasks</h3>
-                                    <p>I chose to complete Task A: Position Control.</p>
+                                    <p>I chose to complete Task A: Position Control. The car is expected to drive towards a wall then stop at a distance of exactly 1ft away from the wall using feedback from the time of flight sensor.</p>
                                     <h4>P/I/D Discussion</h4>
+                                    <p>PID stands for, and its formula is given by <code>correction = Kp*error + Ki*errorIntegral) + Kd*errorDerivative)</code>.
+                                    <p>Proportional gain Kp serves to correct current error (the difference between target and current value) in a proportional way. A higher Kp yields a stronger control action but can also incur instability or overshoot.</p>
+                                    <p>Integral gain Ki helps to reduce past accumulated errors. It adds more steering action if the error persists for a long period of time, but can also cause overshoot or weaving if set too high as the integrated errors in memory takes time to mitigate.</p>
+                                    <p>Derivative gain Kd tries to correct future errors based on the rate of change of the error. It acts as a damping factor that reduces overshoot and limits the speed of the steering response at the risk of amplifying noise.</p>
                                     <h4>Range/Sampling Time Discussion</h4>
+                                    <p>At first, I included a <code>while (!distanceSensor1.checkForDataReady()) delay(1)</code> in the PID loop, but it turned out that each cycle took 90-100 ms on average. To obtain faster loop times, I commented out the codes waiting for sensor ready. As a result, the final PID loop achieves 8-9 ms per cycle, of which the biggest share comes from the TOF sensor reading that takes ~7 ms.</p>
                                     <h4>Implementation</h4>
-                                    <p>Final chosen kp=0.25, ki=0.01:</p>
+                                    <p>The PID result calculation is wrapped in a function, which takes kp, ki, kd, target and current values as input, calculate the PID value, and performs an LPF on derivative term to avoid derivative kick and wind-up protection on integral term:</p>
+                                    <div class="labim" ><img width="550" src="assets/img/Lab/6_20.png" alt="..."></div>
+                                    <p>The PID control loop operates as the following codes, and ends either if the current error is below 1 mm or if the arrays to log data are full.</p>
+                                    <div class="labim" ><img width="420" src="assets/img/Lab/6_21.png" alt="..."></div>
+                                    <p>The PID value is mapped to a PWM value range from 32 to 200. Starting from 32 skips the deadband at which the wheels do not move.</p>
+                                    <p>For tuning, I decided to follow the Heuristic procedure #2, so I started with kp=1.0, kd=0, ki=0. Oscillation is observed with this set of parameters and the corresponding TOF reading & PID value and motor input VS time plots are: </p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_31.png" alt="..."><img width="400" src="assets/img/Lab/6_32.png" alt="..."></div>
+                                    <p class="item-intro text-muted">kp=1.0, ki=0, kd=0</p>
+                                    <p>Next, I decreased kp by a factor of 4 and added the integral term. As a result of the adjustment, oscillation is mitigated but overshoot arises. I also observed that with this set of parameters, the car tends to crash into the wall due to the steering action out of the integral term.</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_33.png" alt="..."><img width="400" src="assets/img/Lab/6_34.png" alt="..."></div>
+                                    <p class="item-intro text-muted">kp=0.25, ki=0.1, kd=0</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_35.png" alt="..."></div>
+                                    <p class="item-intro text-muted">kp=0.25, ki=0.2, kd=0</p>
+                                    <p>To regulate the steering action incurred by integral term, I increased kd and tested on different sets of values.</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_36.png" alt="..."><img width="400" src="assets/img/Lab/6_37.png" alt="..."></div>
+                                    <p class="item-intro text-muted">kp=0.25, ki=0.2, kd=0.8</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_40.png" alt="..."><img width="400" src="assets/img/Lab/6_41.png" alt="..."></div>
+                                    <p class="item-intro text-muted">kp=0.25, ki=0.1, kd=0.8</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_38.png" alt="..."><img width="400" src="assets/img/Lab/6_39.png" alt="..."></div>
+                                    <p class="item-intro text-muted">kp=0.25, ki=0.1, kd=1.0</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_42.png" alt="..."><img width="400" src="assets/img/Lab/6_43.png" alt="..."></div>
+                                    <p class="item-intro text-muted">kp=0.25, ki=0.05, kd=1.0</p>
+                                    <p>The last two sets work pretty well, where convergence can be achieved with only a few oscillations and overshoot is controlled not to lead the car to bump into the wall.</p>
+                                    <h4>Results</h4>
+                                    <p>Below are three successful runs with kp=0.25, ki=0.1, kd=1.0 under different conditions:</p>
+
                                     <div class="youtube-embedded">
-                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/HtIxOkBDxYc"></iframe>
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/4PZpeKprYFk"></iframe>
                                     </div>
-                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_61.png" alt="..."></div>
+                                    <div class="labim" ><img width="380" src="assets/img/Lab/6_611.png" alt="..."><img width="380" src="assets/img/Lab/6_612.png" alt="..."></div>
                                     <div class="youtube-embedded">
-                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/acqvFtxZJjc"></iframe>
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/ssdY-rN1XyY"></iframe>
                                     </div>
-                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_62.png" alt="..."></div>
+
+                                    <div class="labim" ><img width="380" src="assets/img/Lab/6_621.png" alt="..."><img width="380" src="assets/img/Lab/6_622.png" alt="..."></div>
                                     <div class="youtube-embedded">
                                     <iframe  width="640" height="360" src="https://www.youtube.com/embed/RQoU-Ic_UZc"></iframe>
                                     </div>
-                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_63.png" alt="..."></div>
-                                    <h4>Wind-up Discussion</h4>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/6_62.png" alt="..."></div>
+
+                                    <p>The maximum linear speed achieved is around <code>0.8 m/s</code>.</p>
+                                    <h4>Windup Discussion</h4>
+                                    <p>Windup is an issue on the integral term that gives rise to overshoot because the accumulated integral component goes beyond the saturation limits of final control signal. To address this problem, I employ two techniques: setting bounds and using Clegg Integrator. </p>
+                                     <div class="labim" ><img width="500" src="assets/img/Lab/6_22.png" alt="..."></div>
+                                    <p>The Clegg Integrator empties integral value every time the error crosses zero. This eliminates accumulated error in the opposite direction to limit windup.
+</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/6_23.png" alt="..."><img width="290" src="assets/img/Lab/6_24.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Without & With Clegg Integrator</p>
+                                    <h3>Conclusion</h3>
+                                    <p>This lab performs a position PID control through a heuristic process. Besides tuning parameters of PID terms, solutions to eliminate derivative kicks and integral windup are also discussed.</p>
+                                    <div class="labbtn" >
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Close Project
+                                    </button></div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio item 7 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal7" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Lab 7</h2>
+                                    <p class="item-intro text-muted">Kalman Filter</p>
+                                    <h3>Introduction</h3>
                                     <h3>Conclusion</h3>
 
                                     <div class="labbtn" >
