@@ -168,7 +168,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-sm-6">
+
+                    <div class="col-lg-4 col-sm-6 mb-4">
                         <!-- Portfolio item 6-->
                         <div class="portfolio-item">
                             <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal6">
@@ -183,14 +184,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-sm-6">
-                        <!-- Portfolio item 6-->
+
+                    <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">
+
+                        <!-- Portfolio item 7-->
                         <div class="portfolio-item">
                             <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal7">
                                 <div class="portfolio-hover">
                                     <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
                                 </div>
-                                <img class="img-fluid" src="assets/img/artemis.JPG" alt="..." />
+                                <img class="img-fluid" src="assets/img/Lab/7.png" alt="..." />
                             </a>
                             <div class="portfolio-caption">
                                 <div class="portfolio-caption-heading">Lab 7</div>
@@ -939,8 +942,68 @@
                                     <h2 class="text-uppercase">Lab 7</h2>
                                     <p class="item-intro text-muted">Kalman Filter</p>
                                     <h3>Introduction</h3>
-                                    <h3>Conclusion</h3>
+                                    <p>The objective of Lab 7 is to implement a Kalman filter, which is aimed to speed up the control loop obtained from PID in Lab 6.</p>
+                                    <h3>Lab Tasks</h3>
+                                    <h4>Task 1: Estimate Drag and Momentum</h4>
+                                    <p>Before implementing KF, the drag and momentum terms are estimated using a step response in order to calculate A and B matrices. I chose the step size to be <code>88</code>, which is the maximum PWM value generated in Lab 6's PID control. I ran the robot accordingly and obtained the following data: </p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_01.png" alt="..."></div>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_02.png" alt="..."></div>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_03.png" alt="..."></div>
+                                    <p>As the plots imply, the robot reaches a steady state at around <code>4.3 s</code> , where the steady state speed is approximately <code>1907 mm/s</code>. The 90% rise time is about <code>1.8 s</code>. These gives <code>x_dot = 1907</code> and <code>t_90 = 1.8</code>. Drag and momentum are calculated as follows:</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/7_04.png" alt="..."></div>
+                                    <h4>Task 2: Initialize Kalman Filter</h4>
+                                    <p>The following picture from lecture slides explains how the Kalman Filter works. Several parameters are needed to be specified in the work flow: matrices <code>A</code>, <code>B</code>, <code>C</code> to generate state space equation, and noise matrices <code>sigma_u</code> and <code>sigma_z</code>.</p>
+                                    <div class="labim" ><img width="450" src="assets/img/Lab/7_00.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Kalman Filter Workflow from Lecture Slides</p>
+                                    <p>To begin with, A and B are calculated and then discretized using the sampling interval <code>delta_T</code> which I set to be <code>0.1</code>, considering that the sampling time TOF sensor takes to wait for data ready is around 100 ms.</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_05.png" alt="..."></div>
+                                    <p>C matrix is <code>[-1,0]</code> as the TOF sensor reads the negative distance from the wall at state 0. The state vector x is initialized as the negative of initial TOF data. </p>
+                                    <div class="labim" ><img width="220" src="assets/img/Lab/7_06.png" alt="..."></div>
+                                    <p>Then noise covariance matrices are specified. Process noise <code>sigma_u</code> is dependent on sampling rate. The two standard deviations <code>sigma1</code> and <code>sigma2</code> reflects the trust in modeled position and speed respectively, and a diagonal matrix is used because we assume they are uncorrelated.</p>
+                                    <p>For <code>sigma_z</code> which represents measurement noise. I observed that when the robot is stationary, the measurement error is about <code>&#177;5 mm</code>. Considering that movement of the robot may add to more instability, I took four times of the value, i.e., <code>sigma3 = 20</code>.</p>
+                                    <div class="labim" ><img width="460" src="assets/img/Lab/7_07.png" alt="..."></div>
+                                    <p>At this time, I only gave a rough estimation about the ballpark numbers for the variance and would fine-tune it by trials and errors when implementing KF, as their accuracy visibly determines the result of the filter: too big values make KF not respond, and too small values yield bad performance.</p>
+                                    <h4>Task 3: Implement KF in Jupyter Notebook</h4>
+                                    <p>I first implemented Kalman Filter in Jupyter Notebook with  a set of time-stamped ToFand PWM data recorded from Lab 6.</p>
+                                    <p>The KF calculation iterations are wrapped up in a function:</p>
+                                    <div class="labim" ><img width="380" src="assets/img/Lab/7_08.png" alt="..."></div>
+                                    <p>Initial state mean and covariance are specified as (Again, the values of the state covariance matrix are only an initial estimation and will be tuned through experiments): </p>
 
+                                    <div class="labim" ><img width="260" src="assets/img/Lab/7_09.png" alt="..."></div>
+
+                                    <p>Then, the pwm values are scaled into u by dividing the step size 88:</p>
+                                    <div class="labim" ><img width="260" src="assets/img/Lab/7_10.png" alt="..."></div>
+                                    <p>The KF calculation are iterated in the following loop with results recorded: </p>
+                                    <div class="labim" ><img width="240" src="assets/img/Lab/7_11.png" alt="..."></div>
+                                    <p>The initial trial had terrible performance, where KF estimation is far off the original data: </p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_12.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Initial sig=[[5**2,0],[0,5**2]], sigma_u=[[1000,0],[0,1000]], sigma_z=[400] </p>
+                                    <p>As the initial state is way lower than the ground truth and is rather off the trend of the curve, I tuned the initial state covariance to a higher value and the result was improved in turn: </p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_13.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Initial sig=[[30**2,0],[0,30**2]], sigma_u=[[1000,0],[0,1000]], sigma_z=[400] </p>
+
+                                    <p>The KF response was weak at some points, so I increased the process noise variances: </p>
+                                     <div class="labim" ><img width="400" src="assets/img/Lab/7_14.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Initial sig=[[30**2,0],[0,30**2]], sigma_u=[[4000,0],[0,4000]], sigma_z=[400] </p>
+                                    <p>The KF curve was rather close to the ground truth, but still slightly off. I tried to lowere the value of measurement noise variance and obtained a good result at <code>sigma3 = 5</code>:</p>
+
+                                     <div class="labim" ><img width="400" src="assets/img/Lab/7_15.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Initial sig=[[30**2,0],[0,30**2]], sigma_u=[[4000,0],[0,4000]], sigma_z=[25] </p>
+                                    <h4>Task 4: Implement KF on the Robot</h4>
+                                    <p>Implementing KF on Artemis is just transplanting the KF codes from Jupyter to the Artemis (translating to C++ of course) and incorporating KF iteration into PID loop:</p>
+                                    <script src="https://gist.github.com/wz333/652816bb4a76bf3cfda4839ab13ec954.js"></script>
+                                    <p>In the PID loop, the error is updated by KF distance result instead of raw TOF reading:</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_16.png" alt="..."></div>
+                                    <p>By running yhe updated codes with Kalman filter, I obtained the following results:</p>
+
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/7_17.png" alt="..."><img width="400" src="assets/img/Lab/7_18.png" alt="..."></div>
+                                    <p>The KF curve fits the raw data quite well, only the initial point are rather off. Also, implied by the first plot, we can see that the PID value is calculated according to the KF estimation.</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/J5dRijkd66E"></iframe>
+                                    </div>
+                                    <p>As demonstrated in the video, there's not any significant improvement compared to the PID-only counterpart, though. This is because I haven't really sped up the control loop as the wait-for-tof-data-ready delay hasn't been removed yet. </p>
+                                    <h3>Conclusion</h3>
+                                    <p>This lab computes a Kalman filter, whose parameters are basically estimated from the logged data in the previous lab and then fine-tuned through trials and errors. The Kalman filter is first implemented in Jupyter notebook for a sanity check and finally integrated into the PID control on the robot. </p>
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
