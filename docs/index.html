@@ -201,6 +201,22 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-lg-4 col-sm-6 mb-4 mb-sm-0">
+                        <!-- Portfolio item 5-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal8">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img//Lab/8.png" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 8</div>
+                                <div class="portfolio-caption-subheading text-muted">Stunts!</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1004,6 +1020,57 @@
                                     <p>As demonstrated in the video, there's not any significant improvement compared to the PID-only counterpart, though. This is because I haven't really sped up the control loop as the wait-for-tof-data-ready delay hasn't been removed yet. </p>
                                     <h3>Conclusion</h3>
                                     <p>This lab computes a Kalman filter, whose parameters are basically estimated from the logged data in the previous lab and then fine-tuned through trials and errors. The Kalman filter is first implemented in Jupyter notebook for a sanity check and finally integrated into the PID control on the robot. </p>
+                                    <div class="labbtn" >
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Close Project
+                                    </button></div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio item 8 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal8" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Lab 8</h2>
+                                    <p class="item-intro text-muted">Stunts!</p>
+                                    <h3>Introduction</h3>
+                                    <p>This lab aims to perform a controlled stunt. The one I chose to complete is based on position control, where the robot is expected to perform a flip on a mat with a center located 0.5m from the wall and drive back as fast as possible.</p>
+                                    <h3>Lab Tasks</h3>
+                                    <p>Though the lab is based on results from the position control in Lab 6, the PID control is removed to ensure that the robot runs at full speed towards the wall then backwards at full speed to be able to do the flip. Without PID, I had to stop the robot at a longer distance than <code>500 mm</code> to save some room for drifting.</p>
+                                    <p>To test on this distance more easily, the stunt instruction is sent over a bluetooth command with specified distance value: <code>ble.send_command(CMD.FLIP, "1200")</code>. (1200 is the final value a used in the successful demo.)</p>
+                                    <p>In the corresponding command handler at Artemis, the robot is programmed to do the flip after reaching the specified distance by driving backward immediately at full speed. </p>
+                                    <div class="labim" ><img width="280" src="assets/img/Lab/8_05.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Initialization</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/8_03.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Control Loop</p>
+                                    <p><p>In the initial trials, I found that sometimes the wheels on the left side responded faster at the flipping point than the two on the right side even if calibration factor was applied, which caused the flip to fail. To compensate for the difference, I applied the following code before making the wheels spin backward:</p></p>
+                                    <div class="labim" ><img width="210" src="assets/img/Lab/8_04.png" alt="..."></div>
+                                    <p>Below are three successful runs:</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/2VkA0G4mtFs"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">First Success (you can tell how excited I was by the shaking camera ;))</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/Ots67WmaUGQ"></iframe>
+                                    </div>
+                                    <p>The last run took <code>2.8 s</code> for the car to go back.</p>
+                                    <p>Below are the corresponding PWM and TOF reading graphs. In fact, the TOF data are only valid before reaching <code>500 mm</code>, as the robot started to flip after that and the readings were no longer available.</p>
+                                    <div class="labim" ><img width="320" src="assets/img/Lab/8_01.png" alt="..."><img width="320" src="assets/img/Lab/8_02.png" alt="..."></div>
+
+                                    <p></p>
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
