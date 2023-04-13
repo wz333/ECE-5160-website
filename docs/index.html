@@ -1049,23 +1049,34 @@
                                     <h3>Introduction</h3>
                                     <p>This lab aims to perform a controlled stunt. The one I chose to complete is based on position control, where the robot is expected to perform a flip on a mat with a center located 0.5m from the wall and drive back as fast as possible.</p>
                                     <h3>Lab Tasks</h3>
+
                                     <p>Though the lab is based on results from the position control in Lab 6, the PID control is removed to ensure that the robot runs at full speed towards the wall then backwards at full speed to be able to do the flip. Without PID, I had to stop the robot at a longer distance than <code>500 mm</code> to save some room for drifting.</p>
                                     <p>To test on this distance more easily, the stunt instruction is sent over a bluetooth command with specified distance value: <code>ble.send_command(CMD.FLIP, "1200")</code>. (1200 is the final value a used in the successful demo.)</p>
+                                    <p>I also tried to employ Kalman Filter for faster control, but it turned out that the performance was not improved much compared to merely setting a longer distance.</p>
+                                    <div class="labim" ><img width="350" src="assets/img/Lab/8_10.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Kalman Filter Results</p>
+
                                     <p>In the corresponding command handler at Artemis, the robot is programmed to do the flip after reaching the specified distance by driving backward immediately at full speed. </p>
                                     <div class="labim" ><img width="280" src="assets/img/Lab/8_05.png" alt="..."></div>
                                     <p class="item-intro text-muted">Initialization</p>
                                     <div class="labim" ><img width="300" src="assets/img/Lab/8_03.png" alt="..."></div>
                                     <p class="item-intro text-muted">Control Loop</p>
-                                    <p><p>In the initial trials, I found that sometimes the wheels on the left side responded faster at the flipping point than the two on the right side even if calibration factor was applied, which caused the flip to fail. To compensate for the difference, I applied the following code before making the wheels spin backward:</p></p>
-                                    <div class="labim" ><img width="210" src="assets/img/Lab/8_04.png" alt="..."></div>
                                     <p>Below are three successful runs:</p>
                                     <div class="youtube-embedded">
                                     <iframe  width="640" height="360" src="https://www.youtube.com/embed/2VkA0G4mtFs"></iframe>
                                     </div>
                                     <p class="item-intro text-muted">First Success (you can tell how excited I was by the shaking camera ;))</p>
                                     <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/XhPgYyW1vWw"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">Second Success</p>
+                                    <p>Like the second run shows, I found that sometimes the wheels on the left side responded faster at the flipping point than the two on the right side even if calibration factor was applied, which may cause the flip to fail. To compensate for the difference, I applied the following code before making the wheels spin backward:</p>
+                                    <div class="labim" ><img width="210" src="assets/img/Lab/8_04.png" alt="..."></div>
+
+                                    <div class="youtube-embedded">
                                     <iframe  width="640" height="360" src="https://www.youtube.com/embed/Ots67WmaUGQ"></iframe>
                                     </div>
+                                    <p class="item-intro text-muted">Third Success</p>
                                     <p>The last run took <code>2.8 s</code> for the car to go back.</p>
                                     <p>Below are the corresponding PWM and TOF reading graphs. In fact, the TOF data are only valid before reaching <code>500 mm</code>, as the robot started to flip after that and the readings were no longer available.</p>
                                     <div class="labim" ><img width="320" src="assets/img/Lab/8_01.png" alt="..."><img width="320" src="assets/img/Lab/8_02.png" alt="..."></div>
