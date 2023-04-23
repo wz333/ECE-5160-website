@@ -217,6 +217,21 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 3-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal9">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img width="460" height="345" class="img-fluid" src="assets/img/Lab/9.png" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 9</div>
+                                <div class="portfolio-caption-subheading text-muted">Mapping</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1052,7 +1067,7 @@
 
                                     <p>Though the lab is based on results from the position control in Lab 6, the PID control is removed to ensure that the robot runs at full speed towards the wall then backwards at full speed to be able to do the flip. Without PID, I had to stop the robot at a longer distance than <code>500 mm</code> to save some room for drifting.</p>
                                     <p>To test on this distance more easily, the stunt instruction is sent over a bluetooth command with specified distance value: <code>ble.send_command(CMD.FLIP, "1200")</code>. (1200 is the final value a used in the successful demo.)</p>
-                                    <p>I also tried to employ Kalman Filter for faster control, but it turned out that the performance was not improved much compared to merely setting a longer distance.</p>
+                                    <p>I also tried to employ Kalman Filter for faster control, where the parameters were taken from Lab 7 but u was scaled by 255 as the robot moves at full speed. However, it turned out that the performance was not improved much compared to merely setting a longer distance, so I just removed KF in the following implementation.</p>
                                     <div class="labim" ><img width="350" src="assets/img/Lab/8_10.png" alt="..."></div>
                                     <p class="item-intro text-muted">Kalman Filter Results</p>
 
@@ -1082,6 +1097,68 @@
                                     <div class="labim" ><img width="320" src="assets/img/Lab/8_01.png" alt="..."><img width="320" src="assets/img/Lab/8_02.png" alt="..."></div>
 
                                     <p></p>
+                                    <div class="labbtn" >
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Close Project
+                                    </button></div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio item 9 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal9" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Lab 9</h2>
+                                    <p class="item-intro text-muted">Mapping</p>
+                                    <h3>Introduction</h3>
+                                    <p>This lab generates a map of obstacles and walls in a static room by spinning the robot on axis while taking TOF sensor reading. </p>
+                                    <h3>Angular Speed Control</h3>
+                                    <p>To guarantee reliability of distance reading, the robot is expected to turn at a low speed. PID control on angular speed is used to make the turning speed constant. Only the proportional component was included, which turned out to work well. The control is integrated along with IMU and TOF reading in the turning loop:</p>
+                                    <script src="https://gist.github.com/wz333/df40c457eb4de876626907e7838279d1.js"></script>
+                                    <p>For debugging simplicity, parameters as Kp, target turning angle and speed, and benchmark PWM value are set with the bluetooth command <code>ble.send_command(CMD.TURN, "kp|targetAngle|benchmark|targetSpeed")</code>. Below is a successful control with <code>kp = 1</code>, <code>targetTurningAngle = 360 degree</code>, <code>benchmarkPWM = 90</code>, and <code>targetAngularSpeed = 25 degree/sec</code>, where kp is tuned by experiments.</p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/OxTU6_Y9q_E"></iframe>
+                                    </div>
+                                    <div class="labim" ><img width="265" src="assets/img/Lab/9_02.png" alt="..."><img width="275" src="assets/img/Lab/9_01.png" alt="..."><img width="275" src="assets/img/Lab/9_03.png" alt="..."></div>
+                                    <p>As each control loop takes <code>~100 ms</code>, approximately <code>360/25/0.1 = 144</code> readings can be collected per run.</p>
+                                    <p>As the video shows, the robot can drift slightly while turning, causing a maximum error of <code>~50 mm</code>. However, considering the randomness of drifting, I decided to take the average of 3 measurement at each point to minimize such error. Another error comes from the fact that position where the TOF sensor is placed is not exactly the pivot point of the turning, which gives rise to an error of <code>~30 mm</code>. This can be compensated by subtracting this value from collected distances.</p>
+                                    <h3>Read out Distances</h3>
+                                    <p>At point (-3,-2), 3 runs of TOF scans are taken. Corresponding polar plots are: </p>
+                                     <div class="labim" ><img width="265" src="assets/img/Lab/9_04.png" alt="..."><img width="275" src="assets/img/Lab/9_05.png" alt="..."><img width="275" src="assets/img/Lab/9_06.png" alt="..."></div>
+                                    <p>Averaging these three, the final result is:</p>
+                                     <div class="labim" ><img width="300" src="assets/img/Lab/9_07.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Polar Scan at (-3,-2)</p>
+                                    <p>Same steps on other 3 measure points: </p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/9_08.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Polar Scan at (0,3)</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/9_09.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Polar Scan at (5,-3)</p>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/9_10.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Polar Scan at (5,3)</p>
+                                    <h3>Merge and Plot</h3>
+                                    <p>To convert the measurements into the actual inertial reference frame, cartesian distance is first calculated from angle and TOF reading by <code>cos(angle + offset) * distance</code> in x and <code>sin(angle + offset) * distance</code>, where distance is formatted to the number of tiles by <code>TOF reading / 333</code>, and offset is determined by the starting orientation of the robot.</p>. Then, the relative value is deducted from the corresponding reference point's coordinate to calculate the absolute position:
+                                    <div class="labim" ><img width="450" src="assets/img/Lab/9_11.png" alt="..."></div>
+                                    <p>Converting the above calculation to a matrix:</p>
+                                    <div class="labim" ><img width="400" src="assets/img/Lab/9_12.png" alt="..."></div>
+                                    <p>Below is the converted plot:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/9_13.png" alt="..."></div>
+                                    <h3>Line-Based Map</h3>
+                                    <p>A line-based map is estimated from the scatter plot to later be used in the simulator:</p>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/9_14.png" alt="..."></div>
+                                    <div class="labim" ><img width="500" src="assets/img/Lab/9_15.png" alt="..."></div>
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
