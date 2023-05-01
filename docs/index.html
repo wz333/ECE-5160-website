@@ -203,7 +203,7 @@
                     </div>
 
                     <div class="col-lg-4 col-sm-6 mb-4 mb-sm-0">
-                        <!-- Portfolio item 5-->
+                        <!-- Portfolio item 8-->
                         <div class="portfolio-item">
                             <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal8">
                                 <div class="portfolio-hover">
@@ -218,7 +218,7 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-sm-6 mb-4">
-                        <!-- Portfolio item 3-->
+                        <!-- Portfolio item 9-->
                         <div class="portfolio-item">
                             <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal9">
                                 <div class="portfolio-hover">
@@ -233,6 +233,21 @@
                         </div>
                     </div>
                 </div>
+                                    <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">
+                        <!-- Portfolio item 10-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal10">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/Lab/10.png" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 10</div>
+                                <div class="portfolio-caption-subheading text-muted">Localization (Sim)</div>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </section>
         <!-- About-->
@@ -1159,6 +1174,67 @@
                                     <p>A line-based map is estimated from the scatter plot to later be used in the simulator:</p>
                                     <div class="labim" ><img width="500" src="assets/img/Lab/9_14.png" alt="..."></div>
                                     <div class="labim" ><img width="500" src="assets/img/Lab/9_15.png" alt="..."></div>
+                                    <div class="labbtn" >
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Close Project
+                                    </button></div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio item 10 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal10" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Lab 10</h2>
+                                    <p class="item-intro text-muted">Localization (Sim)</p>
+                                    <h3>Introduction</h3>
+                                    <p>This lab implements a grid localization using Bayes Filter in a simulated environment.</p>
+                                    <h3>Implementation</h3>
+                                    <h4>Bayes Filter Algorithm</h4>
+                                    <p>Bayes Filter involves two main steps in each iteration: a prediction step to account for control input data (movement) and an update step to account for observation data (measurement). During the prediction step, uncertainty in the belief is typically increased, while the update step helps to decrease uncertainty.</p>
+                                    <div class="labim" ><img width="550" src="assets/img/Lab/10_01.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Lecture Notes</p>
+                                    <p>I referred to <a href="https://lyl24.github.io/lyl24-ece4960/">Linda Li</a>'s codes for Python implementation of the algorithm.</p>
+                                    <h4>Compute Control</h4>
+                                    <p><code>compute_control</code> is a function that generates a value for <code>u</code> (i.e., <code>delta_rot1</code>, <code>delta_trans</code>, and <code>delta_rot2</code>) with both the current and previous positions. The calculations are done as the following equations:</p>
+                                    <div class="labim" ><img width="350" src="assets/img/Lab/10_02.png" alt="..."></div>
+                                    <p>Translating them into codes:</p>
+                                    <script src="https://gist.github.com/wz333/4cf06e9d99cb1bec8c2f8296cab1128a.js"></script>
+                                    <h4>Odometry Motion Model</h4>
+                                    <p>The <code>odom_motion_model</code> function calculates the probability that the robot moved from a previous position <code>cur_pose</code> to a current position <code>prev_pose</code> given a specific control input <code>u</code>. The compute_control function is first run to determine the control action needed to move from <code>prev_pose</code> to <code>curr_pose</code>. Then noise is added using the Gaussian distribution to estimate the probability that the robot successfully completed the transition using the calculated control action. The probability is the product of the Gaussian function applied to all three parameters:</p>
+                                    <script src="https://gist.github.com/wz333/09980c020a930c954838cf113a5b9589.js"></script>
+                                    <h4>Prediction Step</h4>
+                                    <p>The <code>prediction_step</code> function updates the probability <code>bel_bar</code> by calculating actual control input <code>u</code> from the current and previous positions of the robot <code>cur_odom</code> and <code>prev_odom</code>.If the belief value for any previous data point is less than 0.0001, it is considered negligible and can be disregarded. However, if the belief value is greater than this threshold, the code proceeds to iterate through all current data points and updates <code>bel_bar</code>:</p>
+                                    <script src="https://gist.github.com/wz333/a8d3da73d928bde89d48e5c15df03dc2.js"></script>
+                                    <p>Since this belief represents a probability distribution, it is necessary to normalize <code>loc.bel</code> at the end to ensure that all values add up to 1.</p>
+                                    <h4>Sensor Model</h4>
+                                    <p>The <code>sensor_model</code> function receives a pre-calculated array of the true observations for a specific pose in the grid. It evaluates the probability of each sensor measurement based on the observations recorded by the robot's sensors after its latest movement using the Gaussian function with the true observation as the mean and the sensor_sigma as the standard deviation, which is the noise parameter for the sensor model. An array containing the calculated results for all 18 measurements is returned. Essentially, this function determines the probability that the sensor observations match the true observations for a given pose in the grid:</p>
+                                    <script src="https://gist.github.com/wz333/68c0c20304c3386124c1b737b198bf09.js"></script>
+                                    <h4>Update Step</h4>
+                                    <p>For the update step, the potential current poses of the robot are iterated through using three nested "for" loops. An intermediate belief value (<code>loc.bel_bar</code>, updated during the prediction step) is calculated for each potential pose and multiplied by the probability that the current sensor readings are accurate for that specific pose. The belief value is updated for each pose accordingly, and again normalization is performed as in the prediction step: </p>
+                                    <script src="https://gist.github.com/wz333/38bc1abf59c21eb9756a4928ee88006e.js"></script>
+                                    <h3>Demonstration</h3>
+                                    <p>Below is the Bayes filter simulation on a robot moving in a preplanned trajectory. The odometry (sensor) values in red, ground truth of the robot's position in green, and belief in blue are plotted along with the values of loc.bel_bar at each grid, where the lighter shade of the cell indicates a higher belief value: </p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/Ye4gqZASsYs"></iframe>
+                                    </div>
+                                    <p>the prediction step has a high degree of accuracy, as the cells with high probability are basically close (within 1-2 grid's error) to the robot's actual location.</p>
+                                    <div class="labim" ><img width="700" src="assets/img/Lab/10_05.png" alt="..."></div>
+                                    <p>Below is the logged output for each step:</p>
+                                    <script src="https://gist.github.com/wz333/6b1be463b1493a66424ea72915ff2979.js"></script>
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
