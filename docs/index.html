@@ -232,8 +232,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                                    <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">
+
+                <div class="col-lg-4 col-sm-6 mb-4 mb-lg-0">
                         <!-- Portfolio item 10-->
                         <div class="portfolio-item">
                             <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal10">
@@ -247,6 +247,23 @@
                                 <div class="portfolio-caption-subheading text-muted">Localization (Sim)</div>
                             </div>
                         </div>
+                    </div>
+
+                <div class="col-lg-4 col-sm-6 mb-4 mb-sm-0">
+                        <!-- Portfolio item 11-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal11">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img//Lab/11.png" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 11</div>
+                                <div class="portfolio-caption-subheading text-muted">Localization (Real)</div>
+                            </div>
+                        </div>
+                    </div>
                     </div>
             </div>
         </section>
@@ -1235,6 +1252,110 @@
                                     <div class="labim" ><img width="700" src="assets/img/Lab/10_05.png" alt="..."></div>
                                     <p>Below is the logged output for each step:</p>
                                     <script src="https://gist.github.com/wz333/6b1be463b1493a66424ea72915ff2979.js"></script>
+                                    <div class="labbtn" >
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Close Project
+                                    </button></div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <!-- Portfolio item 11 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal11" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Lab 11</h2>
+                                    <p class="item-intro text-muted">Localization (Real)</p>
+                                    <h3>Introduction</h3>
+                                    <p>In this lab, the localization with Bayes filter simulated in Lab 10 is performed on the actual robot.</p>
+                                    <h3>Task 1: Test Localization in Simulation</h3>
+                                    <p>The provided notebook <code>lab11_sim.ipynb</code> is first run to test the localization functions in simulation. Here is the resultant plot with odom, ground truth and belief: </p>
+                                    <div class="labim" ><img width="600" src="assets/img/Lab/11_01.png" alt="..."></div>
+                                    <p>As the plot suggests, the belief (blue) and the ground truth (green) are basically close to each other.</p>
+                                    <h3>Task 2: Localization on Real Robot</h3>
+                                    <p>The <code>perform_observation_loop</code> function sends a BLE command to the robot which makes it to turn degrees in place and collect 18 equidistant (in terms of the angular space) TOF readings. Angular data and TOF readings are used as sensor bearings and sensor ranges in the Localization module respectively.</p>
+                                    <p>To wait for the robot to collect data, <code>asyncio</code> is used to generate a 40 sec delay. I tried async function definition and await keywords, but some errors occurred probably due to absence of required components for asyncio in the environment. Thus, I just call the asyncio sleep coroutine directly:</p>
+                                    <script src="https://gist.github.com/wz333/aea0b5b3660484aa6d415fd2788fc183.js"></script>
+                                    <p>On Artemis end, I reused the codes in Lab 9 to perform the OBSERVATION command with minor changes: removing PID control and stopping the robot at every 20 degree increment to collect data:</p>
+                                    <script src="https://gist.github.com/wz333/15887308fc10e618881b634995804730.js"></script>
+                                    <p>Considering such open-loop continuous turning control may cause error to accumulate over time. I tested the program on the robot, where it was made to make the turn at a low speed with PWM value <code>90</code>. </p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/sOnSXqTZ59g"></iframe>
+                                    </div>
+                                    <p>The robot turned 340 degrees nearly in place to collect the 18 TOF samples. The corresponding angular data are <code>[0.0, 20.17, 40.249, 60.275, 80.31, 100.431, 120.582, 140.609, 160.654, 180.693, 200.801, 220.824, 240.857, 260.896, 280.908, 301.1, 321.383, 341.428]</code>, where the eventual accumulated error is <code>1.428</code>. I suppose the error value is acceptable, so I just adopted this open loop control.</p>
+
+                                    <h3>Results & Discussion</h3>
+                                    <p>Then I placed the robot at the four marked poses in the lab and ran the update step of the Bayes filter once at each of them. To demonstrate the results, I present the polar plot for collected data, logs for the update step that include the belief with probability, and the plot on map (belief in blue and ground truth in green) at each point. The logs and plotting are all in meters. </p>
+                                    <h5>Pose (-3 ft, -2 ft, 0 deg)</h5>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/11_05.png" alt="..."></div>
+                                    <div class="labim" ><img width="700" src="assets/img/Lab/11_02.png" alt="..."></div>
+                                    <div class="labim" ><img width="450" src="assets/img/Lab/11_03.png" alt="...">  <img width="450" src="assets/img/Lab/11_04.png" alt="..."></div>
+                                    <h5>Pose (0 ft, 3 ft, 0 deg)</h5>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/11_06.png" alt="..."></div>
+                                    <div class="labim" ><img width="700" src="assets/img/Lab/11_07.png" alt="..."></div>
+                                    <div class="labim" ><img width="450" src="assets/img/Lab/11_08.png" alt="...">  <img width="450" src="assets/img/Lab/11_09.png" alt="..."></div>
+                                    <h5>Pose (5 ft, -3 ft, 0 deg)</h5>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/11_10.png" alt="..."></div>
+                                    <div class="labim" ><img width="700" src="assets/img/Lab/11_11.png" alt="..."></div>
+                                    <div class="labim" ><img width="450" src="assets/img/Lab/11_12.png" alt="...">  <img width="450" src="assets/img/Lab/11_13.png" alt="..."></div>
+                                    <h5>Pose (5 ft, 3 ft, 0 deg)</h5>
+                                    <div class="labim" ><img width="300" src="assets/img/Lab/11_14.png" alt="..."></div>
+                                    <div class="labim" ><img width="700" src="assets/img/Lab/11_15.png" alt="..."></div>
+                                    <div class="labim" ><img width="450" src="assets/img/Lab/11_16.png" alt="...">  <img width="450" src="assets/img/Lab/11_17.png" alt="..."></div>
+                                    <h5>Discussion</h5>
+                                    <p>From the results above, we can see that the localization for position worked pretty well except for the last one, where the belief and ground truth points perfectly overlap at all other three points. The last one's belief is not far off, though, with only one grid's error. It is also noticeable that there exists an error of <code>&#177; 10 degrees</code> for orientation belief. Plus, the probabilities of all the beliefs are all extremely close to <code>1.0</code>.</p>
+                                    <p>One possible reason that the localization for <code>(5 ft, 3 ft, 0 deg)</code> was less successful than the others was that the surroundings at that location were quite symmetrical, which can be implied by the polar plot. This symmetry may cause confusion for estimation, as the two locations share similar TOF readings. For the error regarding orientation, I think it was probably caused by drifting in robot turning and noise in TOF data collection. </p>
+                                    <p>In summary, the lab results can be considered successful, as the estimates are basically close to the actual pose of the robot with high probabilities in the beliefs.</p>
+                                    <div class="labbtn" >
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Close Project
+                                    </button></div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio item 12 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal12" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Lab 12</h2>
+                                    <p class="item-intro text-muted">Localization (Real)</p>
+                                    <h3>Introduction</h3>
+                                    <p>This lab implements a grid localization using Bayes Filter in a simulated environment.</p>
+                                    <h3>Task 1: Test Localization in Simulation</h3>
+                                    <div class="labim" ><img width="600" src="assets/img/Lab/11_01.png" alt="..."></div>
+                                    <h3>Task 2: Localization on Real Robot</h3>
+
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/Ye4gqZASsYs"></iframe>
+                                    </div>
+
+                                    <div class="labim" ><img width="700" src="assets/img/Lab/10_05.png" alt="..."></div>
+
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
                                         <i class="fas fa-xmark me-1"></i>
