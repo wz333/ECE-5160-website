@@ -264,6 +264,21 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 6-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal12">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img//Lab/12_08.png" alt="..." />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Lab 12</div>
+                                <div class="portfolio-caption-subheading text-muted">Path Planning and Execution</div>
+                            </div>
+                        </div>
+                    </div>
                     </div>
             </div>
         </section>
@@ -1343,18 +1358,52 @@
                                 <div class="modal-body">
                                     <!-- Project details-->
                                     <h2 class="text-uppercase">Lab 12</h2>
-                                    <p class="item-intro text-muted">Localization (Real)</p>
+                                    <p class="item-intro text-muted">Path Planning and Execution</p>
                                     <h3>Introduction</h3>
-                                    <p>This lab implements a grid localization using Bayes Filter in a simulated environment.</p>
-                                    <h3>Task 1: Test Localization in Simulation</h3>
-                                    <div class="labim" ><img width="600" src="assets/img/Lab/11_01.png" alt="..."></div>
-                                    <h3>Task 2: Localization on Real Robot</h3>
+                                    <p>The final lab is to have the robot navigate through a sequence of waypoints in the same map as in Lab 9-11.</p>
+                                    <p> I collaborate with <a href="https://zhang9340.github.io/FastRobotSp23/">Zhiyuan Zhang</a> in this lab. We together figured out the solution scheme. I developed the orientation and PID codes on Artemis, and the complete program was run on Zhiyuan's robot.</p>
+                                    <h3>Methodology</h3>
+                                    <h4>PID Control</h4>
+                                    <p>To ensure that the robot stops exactly at the correct position/pose, we decided to use PID control for both straight line movements and in-place rotation. The position control is dependent on the change in ToF values, and orientation control is based on the gyroscope readings.</p>
+                                    <script src="https://gist.github.com/wz333/6515d97986f62f9daef1927a750ec5c9.js"></script>
+                                    <script src="https://gist.github.com/wz333/aa43a2859e7dad1ffb9805603eb4dea4.js"></script>
+                                    <p>For debugging convenience, the PID parameters and target are passed to the robot via bluetooth. Below are two PID demos: </p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/BZ1bzeB3WhM"></iframe>
+                                    </div>
+                                    <p class="item-intro text-muted">CMD.PID_POSITION, "1.0|0|0.1|390"</p>
+                                    <div class="labim" ><img width="260" src="assets/img/Lab/12_01.png" alt="..."><img width="260" src="assets/img/Lab/12_02.png" alt="..."><img width="240" src="assets/img/Lab/12_03.png" alt="..."></div>
 
                                     <div class="youtube-embedded">
-                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/Ye4gqZASsYs"></iframe>
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/jnrmCWcRTNc"></iframe>
                                     </div>
+                                    <p class="item-intro text-muted">CMD.PID_ORIENTATION, "1.0|0|0.1|180.0"</p>
+                                    <div class="labim" ><img width="260" src="assets/img/Lab/12_04.png" alt="..."><img width="260" src="assets/img/Lab/12_05.png" alt="..."><img width="240" src="assets/img/Lab/12_06.png" alt="..."></div>
 
-                                    <div class="labim" ><img width="700" src="assets/img/Lab/10_05.png" alt="..."></div>
+                                    <h3>Path Planning</h3>
+                                    <p>As PID position control depends on the distance data from the TOF sensor at the front of the robot, we decided to let the robot always travel perpendicularly towards walls. Therefore, two extra waypoints (yellow) are added:</p>
+                                    <div class="labim" ><img width="600" src="assets/img/Lab/12_09.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Modified Route</p>
+                                    <p>In order to determine PID target values, I put the robot at each of the waypoints to obtain distance measurements. I found that the sensor tends to be more accurate for smaller distances, and become less stable when the distance is above <code>2000 mm</code>. Therefore, we made the robot move backwards and face the closer wall when traveling from <code>(-4, -1)</code> to <code>(1,-1)</code>, which improved accuracy of the distance reading.</p>
+                                    <p>The graph below demonstrates the designed robot movements, where yellow points are the added waypoints, orange lines show how the robot's position and orientation evolve along the way, and blue symbols represent the TOF sensor's direction when each in-place turning finishes/moving starts:</p>
+                                    <div class="labim" ><img width="580" src="assets/img/Lab/12_07.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Robot Movements</p>
+                                    <p>During our first trials, it was always difficult for the robot to get to the final <code>(0, 0)</code>, as tiny errors in either moving towards or turning at the previous point <code>(0, 3)</code> would made the robot not facing the obstacle (highlighted in red) perpendicularly, thus read the distance from the surrounding walls. Therefore, we changed the route to make the robot turn clockwise at <code>(0, 3)</code> and read the wall behind instead then go backward from <code>(0, 3)</code> to <code>(0, 0)</code>. This significantly increased fault tolerance: </p>
+                                    <div class="labim" ><img width="580" src="assets/img/Lab/12_08.png" alt="..."></div>
+                                    <p class="item-intro text-muted">Final Plan</p>
+                                    <h3>Implementation</h3>
+                                    <p>As is shown in the PID section, the positional and orientational PID control are wrapped up to two separate BLE commands with customizable target values. Computer takes charge of all the command sending by translating the designed movements into codes:</p>
+                                    <script src="https://gist.github.com/wz333/387dd668d408b8a2b0fd7789ee9db96e.js"></script>
+                                    <p></p>
+                                    <h3>Results</h3>
+                                    <p>After several trials, we achieved a successful run where almost every waypoints were hit and the robot stopped close to <code>(0,0)</code>: </p>
+                                    <div class="youtube-embedded">
+                                    <iframe  width="640" height="360" src="https://www.youtube.com/embed/iXlihD21dOI"></iframe>
+                                    </div>
+                                    <p>Although the robot was slightly off at <code>(2, -3)</code> (but still hit the point after rotation), the error did not accumulate to the next point, as the algorithm is based on the absolute distance to the wall. It was also slightly off at the last two points, but all the errors were within one grid. These errors may be caused by inaccuracy in TOF readings and failure to make rotation exactly in-place (because the motos are so dependent on the battery level).</p>
+                                    <p>We didn't use localization to validate our solution, as the localization program developed in Lab 11 didn't include PID control to guarantee an accurate stopping pose. However, the video can clearly demonstrate the performance of our result.</p>
+                                    <h3>Conclusion</h3>
+                                    <p>The final lab of this course concludes with a satisfactory outcome: the robot successfully navigated through all the waypoints! I am so grateful to the exceptional staff for your dedication and support throughout the entire semester. Thank you! :)</p>
 
                                     <div class="labbtn" >
                                     <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
